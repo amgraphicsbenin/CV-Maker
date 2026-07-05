@@ -20,14 +20,24 @@ interface CVPreviewProps {
   color: ColorPalette;
 }
 
-export const CVPreview: React.FC<CVPreviewProps> = ({ data, theme, color }) => {
-  if (!data || !data.contact) {
+export const CVPreview: React.FC<CVPreviewProps> = ({ data: rawData, theme, color }) => {
+  if (!rawData || !rawData.contact) {
     return (
       <div className="w-full bg-white text-slate-500 rounded-lg p-8 text-center border border-slate-200 shadow-xs">
         Données du CV indisponibles ou en cours de chargement...
       </div>
     );
   }
+
+  const data = {
+    ...rawData,
+    skills: {
+      ...rawData.skills,
+      expertise: (rawData.skills?.expertise || []).map(s => s.trim()).filter(s => s.length > 0),
+      itTools: (rawData.skills?.itTools || []).map(s => s.trim()).filter(s => s.length > 0)
+    },
+    interests: (rawData.interests || []).map(s => s.trim()).filter(s => s.length > 0)
+  };
 
   // Color configuration mapping
   const colors = {
@@ -178,7 +188,7 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ data, theme, color }) => {
                 </h2>
                 <div className="space-y-2">
                   {data.certifications.map((cert) => (
-                    <div key={cert.id} className="text-[9px]">
+                    <div key={cert.id} className="text-[9px] avoid-page-break">
                       <p className="font-bold text-slate-800 leading-snug">{cert.title}</p>
                       <p className="text-slate-500 text-[8px]">{cert.issuer}</p>
                       <p className={`text-[8px] ${colors.accent} font-semibold uppercase mt-0.5`}>{cert.date}</p>
@@ -245,7 +255,7 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ data, theme, color }) => {
                 <h2 className="text-[9.5px] font-bold uppercase tracking-widest text-slate-400 mb-1.5 border-b pb-0.5 border-slate-100">
                   PROFIL PROFESSIONNEL
                 </h2>
-                <p className="text-slate-600 text-[10px] leading-relaxed text-justify italic">
+                <p className="text-slate-600 text-[10px] leading-relaxed text-justify italic whitespace-pre-line">
                   "{data.summary}"
                 </p>
               </div>
@@ -258,7 +268,7 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ data, theme, color }) => {
               </h2>
               <div className="relative border-l-2 border-slate-200 ml-3 pl-6 space-y-4">
                 {data.experiences.map((exp) => (
-                  <div key={exp.id} className="relative">
+                  <div key={exp.id} className="relative avoid-page-break">
                     {/* Timeline dot */}
                     <span className={`absolute -left-[31px] top-1 w-2.5 h-2.5 rounded-full border-2 border-white ${colors.bullet}`}></span>
                     <div className="flex justify-between items-baseline mb-0.5">
@@ -293,7 +303,7 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ data, theme, color }) => {
                 </h2>
                 <div className="grid grid-cols-1 gap-2.5">
                   {data.education.map((edu) => (
-                    <div key={edu.id} className="text-[9.5px] flex justify-between items-start gap-4">
+                    <div key={edu.id} className="text-[9.5px] flex justify-between items-start gap-4 avoid-page-break">
                       <div>
                         <h3 className="font-bold text-slate-900 leading-tight">
                           {edu.degree}
@@ -319,7 +329,7 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ data, theme, color }) => {
                 </h2>
                 <div className="grid grid-cols-2 gap-3">
                   {data.references.map((ref) => (
-                    <div key={ref.id} className="text-[9px] bg-slate-50/50 p-2 rounded-lg border border-slate-100">
+                    <div key={ref.id} className="text-[9px] bg-slate-50/50 p-2 rounded-lg border border-slate-100 avoid-page-break">
                       <p className="font-bold text-slate-900">{ref.name}</p>
                       <p className="text-slate-500 text-[8px]">{ref.role} • <span className="font-semibold">{ref.company}</span></p>
                       <p className="text-slate-600 flex items-center gap-1 mt-0.5 font-mono text-[8px]">
@@ -333,7 +343,7 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ data, theme, color }) => {
             )}
 
             {/* LUXURIOUS STATUT ACTUEL & SIGNATURE FOOTER */}
-            <div className="mt-auto flex justify-between items-center bg-slate-900 p-4 rounded-xl text-white">
+            <div className="mt-auto flex justify-between items-center bg-slate-900 p-4 rounded-xl text-white avoid-page-break">
               <div className="max-w-[65%]">
                 <p className="text-[8px] uppercase tracking-widest text-slate-400 font-bold mb-0.5">Certification & Engagement</p>
                 <p className="text-[9px] font-medium italic text-slate-300 leading-tight">
@@ -413,7 +423,7 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ data, theme, color }) => {
                   <User className="w-3.5 h-3.5 text-slate-500" />
                   RÉSUMÉ
                 </h2>
-                <p className="text-slate-600 text-justify text-[11px] leading-relaxed italic">
+                <p className="text-slate-600 text-justify text-[11px] leading-relaxed italic whitespace-pre-line">
                   "{data.summary}"
                 </p>
               </div>
@@ -427,7 +437,7 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ data, theme, color }) => {
               </h2>
               <div className="space-y-4">
                 {data.experiences.map((exp) => (
-                  <div key={exp.id} className="relative pl-1">
+                  <div key={exp.id} className="relative pl-1 avoid-page-break">
                     <div className="flex justify-between items-baseline mb-1">
                       <h3 className="font-bold text-slate-900 uppercase text-[11.5px]">
                         {exp.role}
@@ -460,7 +470,7 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ data, theme, color }) => {
                 </h2>
                 <div className="grid grid-cols-2 gap-4">
                   {data.references.map((ref) => (
-                    <div key={ref.id} className="text-[10.5px]">
+                    <div key={ref.id} className="text-[10.5px] avoid-page-break">
                       <p className="font-bold text-slate-900">{ref.name}</p>
                       <p className="text-slate-500">{ref.role} / <span className="font-semibold">{ref.company}</span></p>
                       <p className="text-slate-600 flex items-center gap-1 mt-0.5 font-mono text-[10px]">
@@ -490,7 +500,7 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ data, theme, color }) => {
                 </h2>
                 <div className="space-y-3">
                   {data.education.map((edu) => (
-                    <div key={edu.id} className="text-[10.5px]">
+                    <div key={edu.id} className="text-[10px] avoid-page-break">
                       <h3 className="font-bold text-slate-900 leading-tight">
                         {edu.degree}
                       </h3>
@@ -515,7 +525,7 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ data, theme, color }) => {
                 </h2>
                 <div className="space-y-2.5">
                   {data.certifications.map((cert) => (
-                    <div key={cert.id} className="text-[10.5px] bg-slate-50/80 p-1.5 rounded border border-slate-100">
+                    <div key={cert.id} className="text-[10.5px] bg-slate-50/80 p-1.5 rounded border border-slate-100 avoid-page-break">
                       <h3 className="font-bold text-slate-900 leading-tight">
                         {cert.title}
                       </h3>
@@ -608,7 +618,7 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ data, theme, color }) => {
         )}
 
         {/* FOOTER & SIGNATURE */}
-        <div className="border-t pt-3.5 mt-4 border-slate-200 flex justify-between items-end text-[10px] text-slate-500">
+        <div className="border-t pt-3.5 mt-4 border-slate-200 flex justify-between items-end text-[10px] text-slate-500 avoid-page-break">
           <p className="italic max-w-[65%]">
             "{data.signature.text}"
           </p>
@@ -636,7 +646,7 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ data, theme, color }) => {
               {data.contact.title || "Conseiller Client & Assistant Administratif"}
             </p>
             {data.summary && (
-              <p className="text-slate-600 text-[10.5px] mt-2 italic text-justify line-clamp-3">
+              <p className="text-slate-600 text-[10.5px] mt-2 italic text-justify whitespace-pre-line">
                 "{data.summary}"
               </p>
             )}
@@ -669,7 +679,7 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ data, theme, color }) => {
               </h2>
               <div className="relative border-l border-slate-200 pl-4 space-y-4 ml-2">
                 {data.experiences.map((exp) => (
-                  <div key={exp.id} className="relative">
+                  <div key={exp.id} className="relative avoid-page-break">
                     {/* Timeline dot */}
                     <span className={`absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full border-2 border-white ${colors.bullet}`}></span>
                     <div className="flex justify-between items-baseline">
@@ -698,7 +708,7 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ data, theme, color }) => {
                 </h2>
                 <div className="grid grid-cols-2 gap-4 bg-slate-50 p-2.5 rounded-lg border border-slate-100">
                   {data.references.map((ref) => (
-                    <div key={ref.id} className="text-[10.5px]">
+                    <div key={ref.id} className="text-[10.5px] avoid-page-break">
                       <p className="font-bold text-slate-900">{ref.name}</p>
                       <p className="text-slate-500">{ref.role} • <span className="font-medium text-slate-700">{ref.company}</span></p>
                       <p className="text-slate-600 font-mono text-[9.5px] mt-0.5 flex items-center gap-1">
@@ -720,8 +730,8 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ data, theme, color }) => {
                 Formations
               </h2>
               <div className="space-y-2">
-                {data.education.map((edu) => (
-                  <div key={edu.id} className="text-[10.5px] border-b border-slate-100 pb-1.5 last:border-0 last:pb-0">
+                  {data.education.map((edu) => (
+                    <div key={edu.id} className="text-[10.5px] border-b border-slate-100 pb-1.5 last:border-0 last:pb-0 avoid-page-break">
                     <p className="font-bold text-slate-900 leading-tight">{edu.degree}</p>
                     <p className="text-slate-500 text-[9.5px]">{edu.institution}</p>
                     <p className={`text-[9px] font-semibold text-slate-400`}>{edu.period}</p>
@@ -739,7 +749,7 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ data, theme, color }) => {
                 </h2>
                 <div className="space-y-1.5">
                   {data.certifications.map((cert) => (
-                    <div key={cert.id} className="text-[10px] p-1.5 bg-slate-50 rounded border border-slate-100">
+                    <div key={cert.id} className="text-[10px] p-1.5 bg-slate-50 rounded border border-slate-100 avoid-page-break">
                       <p className="font-bold text-slate-900 leading-snug">{cert.title}</p>
                       <p className="text-slate-500 text-[9px]">{cert.issuer}</p>
                       <p className={`text-[9px] font-bold ${colors.accent} mt-0.5`}>{cert.date}</p>
@@ -813,7 +823,7 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ data, theme, color }) => {
         )}
 
         {/* Footer */}
-        <div className="border-t pt-3 mt-4 border-slate-100 flex justify-between items-end text-[10px] text-slate-500">
+        <div className="border-t pt-3 mt-4 border-slate-100 flex justify-between items-end text-[10px] text-slate-500 avoid-page-break">
           <p className="italic">"{data.signature.text}"</p>
           <p className="font-bold uppercase text-slate-700 text-[9px]">{data.signature.location}, {data.signature.date}</p>
         </div>
@@ -845,7 +855,7 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ data, theme, color }) => {
         {/* Executive summary statement */}
         {data.summary && (
           <div className="mb-4">
-            <p className="text-slate-700 text-justify italic text-[10.5px]">
+            <p className="text-slate-700 text-justify italic text-[10.5px] whitespace-pre-line">
               "{data.summary}"
             </p>
           </div>
@@ -861,7 +871,7 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ data, theme, color }) => {
               </h2>
               <div className="space-y-3.5">
                 {data.experiences.map((exp) => (
-                  <div key={exp.id}>
+                  <div key={exp.id} className="avoid-page-break">
                     <div className="flex justify-between items-baseline font-bold text-slate-900">
                       <span>{exp.role}</span>
                       <span className="text-[10px] font-normal text-slate-500">{exp.period}</span>
@@ -888,7 +898,7 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ data, theme, color }) => {
                 </h2>
                 <div className="grid grid-cols-2 gap-4">
                   {data.references.map((ref) => (
-                    <div key={ref.id} className="text-[10px]">
+                    <div key={ref.id} className="text-[10px] avoid-page-break">
                       <p className="font-bold text-slate-900">{ref.name}</p>
                       <p className="text-slate-500 leading-snug">{ref.role} • {ref.company}</p>
                       <p className="text-slate-600 font-semibold">{ref.phone}</p>
@@ -925,7 +935,7 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ data, theme, color }) => {
                 </h2>
                 <div className="space-y-1.5">
                   {data.certifications.map((cert) => (
-                    <div key={cert.id} className="text-[9.5px]">
+                    <div key={cert.id} className="text-[9.5px] avoid-page-break">
                       <p className="font-bold text-slate-900">{cert.title}</p>
                       <p className="text-slate-500">{cert.issuer}</p>
                       <p className={`text-[9px] font-bold ${colors.accent}`}>{cert.date}</p>
@@ -993,7 +1003,7 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ data, theme, color }) => {
         )}
 
         {/* Signature */}
-        <div className="border-t border-slate-200 pt-3 mt-3.5 flex justify-between items-end text-[9.5px] text-slate-500">
+        <div className="border-t border-slate-200 pt-3 mt-3.5 flex justify-between items-end text-[9.5px] text-slate-500 avoid-page-break">
           <p className="italic">"{data.signature.text}"</p>
           <p className="font-bold uppercase text-slate-700">{data.signature.location}, {data.signature.date}</p>
         </div>
@@ -1027,7 +1037,7 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ data, theme, color }) => {
 
         {/* Summary */}
         {data.summary && (
-          <div className="mb-5 bg-slate-50 p-3 rounded-lg border-l-4 border-slate-700 italic text-slate-700 text-[10.5px]">
+          <div className="mb-5 bg-slate-50 p-3 rounded-lg border-l-4 border-slate-700 italic text-slate-700 text-[10.5px] whitespace-pre-line">
             "{data.summary}"
           </div>
         )}
@@ -1041,7 +1051,7 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ data, theme, color }) => {
               </h2>
               <div className="space-y-4">
                 {data.experiences.map((exp) => (
-                  <div key={exp.id} className="border-b border-slate-100 pb-3 last:border-b-0 last:pb-0">
+                  <div key={exp.id} className="border-b border-slate-100 pb-3 last:border-b-0 last:pb-0 avoid-page-break">
                     <div className="flex justify-between items-baseline mb-1">
                       <h3 className="font-bold text-slate-900 text-[11px] uppercase">{exp.role}</h3>
                       <span className={`text-[9.5px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700 uppercase whitespace-nowrap`}>{exp.period}</span>
@@ -1068,7 +1078,7 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ data, theme, color }) => {
                 </h2>
                 <div className="grid grid-cols-2 gap-4">
                   {data.references.map((ref) => (
-                    <div key={ref.id} className="text-[10px] p-2 bg-slate-50 rounded border border-slate-200/50">
+                    <div key={ref.id} className="text-[10px] p-2 bg-slate-50 rounded border border-slate-200/50 avoid-page-break">
                       <p className="font-bold text-slate-900">{ref.name}</p>
                       <p className="text-slate-500 font-medium">{ref.role} — <span className="font-semibold">{ref.company}</span></p>
                       <p className="text-slate-600 font-mono text-[9px] mt-0.5 flex items-center gap-1">
@@ -1106,7 +1116,7 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ data, theme, color }) => {
                 </h2>
                 <div className="space-y-2">
                   {data.certifications.map((cert) => (
-                    <div key={cert.id} className="text-[10px] border-l-2 border-slate-700 pl-2 py-0.5">
+                    <div key={cert.id} className="text-[10px] border-l-2 border-slate-700 pl-2 py-0.5 avoid-page-break">
                       <p className="font-bold text-slate-900 leading-tight">{cert.title}</p>
                       <p className="text-slate-500 text-[9px]">{cert.issuer}</p>
                       <p className={`text-[9px] font-bold ${colors.accent}`}>{cert.date}</p>
@@ -1178,7 +1188,7 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ data, theme, color }) => {
         )}
 
         {/* Signature */}
-        <div className="border-t border-slate-200 pt-3 mt-3 flex justify-between items-end text-[9.5px] text-slate-500">
+        <div className="border-t border-slate-200 pt-3 mt-3 flex justify-between items-end text-[9.5px] text-slate-500 avoid-page-break">
           <p className="italic">"{data.signature.text}"</p>
           <p className="font-bold uppercase text-slate-700">{data.signature.location}, {data.signature.date}</p>
         </div>

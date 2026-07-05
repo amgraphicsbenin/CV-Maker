@@ -10,19 +10,19 @@ echo ===================================================
 where node >nul 2>nul
 if %errorlevel% neq 0 (
     echo [ERROR] Node.js is not installed or not in PATH.
-    echo Please install Node.js (https://nodejs.org) and try again.
+    echo Please install Node.js at https://nodejs.org and try again.
     pause
     exit /b 1
 )
 
 :: Check if node_modules exists
-if not exist "node_modules\" (
+if not exist "node_modules" (
     echo [INFO] Installing dependencies, please wait...
     call npm install
 )
 
 :: Build the project if dist folder doesn't exist
-if not exist "dist\" (
+if not exist "dist" (
     echo [INFO] Building the project for production...
     call npm run build
 )

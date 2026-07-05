@@ -453,6 +453,22 @@ export const CVEditor: React.FC<CVEditorProps> = ({ data, onChange }) => {
                         type="text"
                         value={highlight}
                         onChange={(e) => handleHighlightChange(exp.id, hIdx, e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            const newHighlights = [...exp.highlights];
+                            newHighlights.splice(hIdx + 1, 0, "");
+                            handleExperienceChange(exp.id, 'highlights', newHighlights);
+                            
+                            // Focus the next input after rendering
+                            setTimeout(() => {
+                              const inputs = document.querySelectorAll(`[data-exp-id="${exp.id}"]`);
+                              const nextInput = inputs[hIdx + 1] as HTMLInputElement;
+                              if (nextInput) nextInput.focus();
+                            }, 50);
+                          }
+                        }}
+                        data-exp-id={exp.id}
                         className="w-full text-xs p-1 border border-slate-200 rounded bg-slate-50/30"
                       />
                       <button 
@@ -644,7 +660,7 @@ export const CVEditor: React.FC<CVEditorProps> = ({ data, onChange }) => {
                 type="text" 
                 value={data.skills.itTools.join(', ')}
                 onChange={(e) => {
-                  const tools = e.target.value.split(',').map(s => s.trim()).filter(s => s.length > 0);
+                  const tools = e.target.value.split(',');
                   onChange({
                     ...data,
                     skills: {
@@ -665,7 +681,7 @@ export const CVEditor: React.FC<CVEditorProps> = ({ data, onChange }) => {
                 rows={4}
                 value={data.skills.expertise.join('\n')}
                 onChange={(e) => {
-                  const exp = e.target.value.split('\n').map(s => s.trim()).filter(s => s.length > 0);
+                  const exp = e.target.value.split('\n');
                   onChange({
                     ...data,
                     skills: {
@@ -742,7 +758,7 @@ export const CVEditor: React.FC<CVEditorProps> = ({ data, onChange }) => {
               rows={3}
               value={data.interests.join(', ')}
               onChange={(e) => {
-                const arr = e.target.value.split(',').map(s => s.trim()).filter(s => s.length > 0);
+                const arr = e.target.value.split(',');
                 onChange({ ...data, interests: arr });
               }}
               className="w-full text-xs p-2.5 border border-slate-200 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white"

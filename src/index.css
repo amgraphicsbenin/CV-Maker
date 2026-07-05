@@ -9,6 +9,12 @@
 
 /* Custom Print styles */
 @media print {
+  /* Set A4 portrait print size and clear browser margins */
+  @page {
+    size: A4 portrait;
+    margin: 15mm 15mm 15mm 15mm;
+  }
+
   /* Ensure parent containers do not restrict height or overflow during print */
   html, body, #root, .min-h-screen, main {
     height: auto !important;
@@ -45,20 +51,15 @@
   /* Ensure the A4 container is sized perfectly and occupies the whole print page, flowing naturally */
   .print-area {
     position: relative !important;
-    width: 210mm !important;
-    min-height: 297mm !important;
-    margin: 0 auto !important;
-    padding: 15mm !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
     border: none !important;
     box-shadow: none !important;
     background: white !important;
     display: block !important;
-  }
-
-  /* Set A4 portrait print size and clear browser margins */
-  @page {
-    size: A4 portrait;
-    margin: 0;
   }
 }
 
@@ -83,4 +84,9 @@
   width: 210mm;
   min-height: 297mm;
   aspect-ratio: 1 / 1.414;
+}
+
+.avoid-page-break {
+  break-inside: avoid;
+  page-break-inside: avoid;
 }
