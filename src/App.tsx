@@ -788,7 +788,7 @@ export default function App() {
           )}
 
           {/* The A4 Canvas Wrapper */}
-          <div className="w-full max-w-[210mm] shadow-2xl rounded-xl hover:shadow-slate-300/50 transition-shadow">
+          <div className="w-full max-w-[210mm] shadow-2xl rounded-xl hover:shadow-slate-300/50 transition-shadow print-wrapper">
             <CVPreview data={resumeData} theme={theme} color={color} />
           </div>
 

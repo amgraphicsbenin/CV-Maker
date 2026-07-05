@@ -108,7 +108,7 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ data: rawData, theme, colo
     return (
       <div className="flex flex-col h-full text-slate-800 text-[11px] leading-relaxed">
         {/* Header Block (Luxurious professional layout) */}
-        <div className="bg-white border-b border-slate-200 px-8 py-5 flex justify-between items-end shadow-xs -mx-8 -mt-8 mb-5">
+        <div className="bg-white border-b border-slate-200 px-8 py-5 flex justify-between items-end shadow-xs -mx-8 -mt-8 mb-5 cv-header-block">
           <div className="max-w-[55%]">
             <h1 className="font-display font-extrabold text-3xl tracking-tight text-slate-900 uppercase leading-none">
               {data.contact.name || "Arnaldo KOUTOMI"}
@@ -637,7 +637,7 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ data: rawData, theme, colo
     return (
       <div className="flex flex-col h-full text-slate-800 text-[11.5px] leading-relaxed">
         {/* Elegant top banner */}
-        <div className={`p-5 -mx-8 -mt-8 mb-5 ${colors.headerBg} border-b ${colors.divider} flex justify-between items-center`}>
+        <div className={`p-5 -mx-8 -mt-8 mb-5 ${colors.headerBg} border-b ${colors.divider} flex justify-between items-center cv-header-block`}>
           <div className="max-w-[70%]">
             <h1 className="font-display font-extrabold text-3xl tracking-tight text-slate-900">
               {data.contact.name || "Arnaldo KOUTOMI"}
@@ -1016,7 +1016,7 @@ export const CVPreview: React.FC<CVPreviewProps> = ({ data: rawData, theme, colo
     return (
       <div className="flex flex-col h-full text-slate-800 text-[11px] leading-relaxed">
         {/* Banner with dark accents */}
-        <div className={`p-6 -mx-8 -mt-8 mb-6 bg-slate-900 text-white flex justify-between items-center`}>
+        <div className={`p-6 -mx-8 -mt-8 mb-6 bg-slate-900 text-white flex justify-between items-center cv-header-block`}>
           <div>
             <span className={`text-[10px] font-bold tracking-widest text-slate-300 uppercase px-2 py-0.5 rounded bg-white/10`}>
               PROFIL PROFESSIONNEL

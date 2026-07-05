@@ -61,6 +61,23 @@
     background: white !important;
     display: block !important;
   }
+
+  /* Cancel parent container shadows and borders in print mode */
+  .print-wrapper {
+    box-shadow: none !important;
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Cancel negative margins on header banners in print mode to prevent clipping */
+  .cv-header-block {
+    margin-top: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-top: 0 !important;
+  }
 }
 
 /* Web view scrollbar styling */
