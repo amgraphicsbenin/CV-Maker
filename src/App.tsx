@@ -6,6 +6,7 @@ import { initialResumeData } from './defaultData';
 import { CVPreview } from './components/CVPreview';
 import { CVEditor } from './components/CVEditor';
 import { AISuggestions } from './components/AISuggestions';
+import { saveResume, loadResume, supabase } from './supabaseClient';
 import { 
   Printer, 
   RotateCcw, 
@@ -20,7 +21,8 @@ import {
   FileDown,
   X,
   ExternalLink,
-  Loader2
+  Loader2,
+  Cloud
 } from 'lucide-react';
 
 const getHashState = () => {
@@ -129,6 +131,41 @@ export default function App() {
   const [showIframeHelp, setShowIframeHelp] = useState<boolean>(false);
   const [isDownloadingPDF, setIsDownloadingPDF] = useState<boolean>(false);
 
+  const [cloudId, setCloudId] = useState<string | null>(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('id');
+  });
+  const [isSavingToCloud, setIsSavingToCloud] = useState<boolean>(false);
+  const [isLoadingFromCloud, setIsLoadingFromCloud] = useState<boolean>(false);
+
+  // Load resume from Supabase on startup if id query parameter exists
+  useEffect(() => {
+    if (cloudId) {
+      const fetchResume = async () => {
+        setIsLoadingFromCloud(true);
+        try {
+          const data = await loadResume(cloudId);
+          if (data) {
+            setResumeData(data);
+            showToast();
+          } else {
+            alert("Aucun CV trouvé avec cet identifiant.");
+            setCloudId(null);
+            const url = new URL(window.location.href);
+            url.searchParams.delete('id');
+            window.history.replaceState({}, '', url.toString());
+          }
+        } catch (err: any) {
+          console.error("Failed to load resume from Supabase:", err);
+          alert("Erreur lors du chargement du CV : " + err.message);
+        } finally {
+          setIsLoadingFromCloud(false);
+        }
+      };
+      fetchResume();
+    }
+  }, [cloudId]);
+
   // Save changes to localStorage for continuous progress persistence
   useEffect(() => {
     localStorage.setItem('arnaldo_resume_data', JSON.stringify(resumeData));
@@ -140,7 +177,32 @@ export default function App() {
       localStorage.removeItem('arnaldo_resume_data');
       setTheme('polish');
       setColor('blue');
+      setCloudId(null);
+      const url = new URL(window.location.href);
+      url.searchParams.delete('id');
+      window.history.replaceState({}, '', url.toString());
       showToast();
+    }
+  };
+
+  const handleSaveToCloud = async () => {
+    setIsSavingToCloud(true);
+    try {
+      const id = await saveResume(cloudId, resumeData);
+      setCloudId(id);
+      
+      const url = new URL(window.location.href);
+      url.searchParams.set('id', id);
+      window.history.replaceState({}, '', url.toString());
+      
+      await navigator.clipboard.writeText(url.toString());
+      showToast();
+      alert("Votre CV a été sauvegardé avec succès dans le Cloud !\n\nLe lien de partage a été copié dans votre presse-papiers :\n" + url.toString());
+    } catch (err: any) {
+      console.error("Failed to save resume to Supabase:", err);
+      alert("Erreur lors de la sauvegarde sur Supabase : " + err.message);
+    } finally {
+      setIsSavingToCloud(false);
     }
   };
 
@@ -513,6 +575,12 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-100 flex flex-col font-sans antialiased">
+      {isLoadingFromCloud && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex flex-col items-center justify-center text-white">
+          <Loader2 className="w-10 h-10 animate-spin text-blue-400 mb-3" />
+          <p className="text-sm font-semibold">Chargement du CV depuis le Cloud...</p>
+        </div>
+      )}
       {/* Toast Notification */}
       {showSuccessToast && (
         <div className="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-4 py-3 rounded-lg shadow-lg border border-slate-700 flex items-center gap-2 animate-bounce">
@@ -564,6 +632,21 @@ export default function App() {
                 <FileDown className="w-4 h-4" />
               )}
               <span>{isDownloadingPDF ? 'Génération...' : 'Télécharger PDF'}</span>
+            </button>
+
+            {/* Supabase Cloud Save Button */}
+            <button 
+              onClick={handleSaveToCloud}
+              disabled={isSavingToCloud}
+              title="Sauvegarder les données dans le Cloud Supabase et copier le lien"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-violet-600 hover:bg-violet-700 disabled:bg-slate-800 disabled:text-slate-400 text-white rounded-lg text-xs font-semibold shadow-sm transition-colors active:scale-95 animate-pulse-once"
+            >
+              {isSavingToCloud ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <Cloud className="w-3.5 h-3.5" />
+              )}
+              <span>Sauvegarder Cloud</span>
             </button>
 
             {/* Export JSON Schema */}
