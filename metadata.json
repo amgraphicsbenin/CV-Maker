@@ -1,0 +1,6 @@
+{
+  "name": "Arnaldo Koutomi - CV Interactif & PDF",
+  "description": "Un outil de visualisation, d'édition et d'export PDF de haute qualité pour le CV professionnel d'Arnaldo Koutomi, conseiller client et administratif.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
