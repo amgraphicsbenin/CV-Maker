@@ -21,11 +21,9 @@ if not exist "node_modules" (
     call npm install
 )
 
-:: Build the project if dist folder doesn't exist
-if not exist "dist" (
-    echo [INFO] Building the project for production...
-    call npm run build
-)
+:: Build the project to bake in any .env or code changes
+echo [INFO] Building the project for production...
+call npm run build
 
 echo [INFO] Starting the Express server...
 echo The app will be available at http://localhost:3000
